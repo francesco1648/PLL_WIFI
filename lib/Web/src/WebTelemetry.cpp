@@ -37,9 +37,9 @@ void WebTelemetry::setUdpTarget(IPAddress pcIp, uint16_t pcPort) {
     _udp.begin(0);  // porta locale libera
 }
 
-void WebTelemetry::updateData(float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate) {
+void WebTelemetry::updateData(byte motorID, float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate) {
     // salva nel buffer circolare
-    _history[_head] = { currentSpeed, targetSpeed, pidOutput, OutputPcalculate, OutputIcalculate, OutputDcalculate, millis() };
+    _history[_head] = {motorID, currentSpeed, targetSpeed, pidOutput, OutputPcalculate, OutputIcalculate, OutputDcalculate, millis() };
     _head = (_head + 1);
     if (_head >= TELEMETRY_HISTORY_SIZE) {
         _head = 0;
@@ -57,8 +57,8 @@ void WebTelemetry::sendLatestUdp() {
 
     // preparo un record CSV
     char buf[128];
-     int len = snprintf(buf, sizeof(buf), "%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
-                       s.timestamp, s.currentSpeed, s.targetSpeed,
+     int len = snprintf(buf, sizeof(buf), "%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                       s.timestamp, s.motorID, s.currentSpeed, s.targetSpeed,
                        s.pidOutput, s.OutputPcalculate, s.OutputIcalculate, s.OutputDcalculate);
 
     _udp.beginPacket(_udpTargetIP, _udpTargetPort);
@@ -86,6 +86,7 @@ void WebTelemetry::handleClient() {
     client.println("<!DOCTYPE html><html><head>");
     client.println("<meta http-equiv='refresh' content='3'>"); // aggiornamento ogni 3s
     client.println("</head><body>");
+    client.printf("<p>Velocità Attuale: %.2f RPM</p>\n", _showMotorID);
     client.printf("<p>Velocità Attuale: %.2f RPM</p>\n", _showCurrentSpeed);
     client.printf("<p>Velocità Target: %.2f RPM</p>\n", _showTargetSpeed);
     client.printf("<p>PID Output: %.2f</p>\n", _showPIDOutput);
@@ -99,13 +100,14 @@ void WebTelemetry::handleClient() {
 
 
 
-void WebTelemetry::currentData( float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate) {
+void WebTelemetry::currentData( byte motorID, float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate) {
     _showCurrentSpeed = currentSpeed;
     _showTargetSpeed  = targetSpeed;
     _showPIDOutput    = pidOutput;
     _showOutputPcalculate = OutputPcalculate;
     _showOutputIcalculate = OutputIcalculate;
     _showOutputDcalculate = OutputDcalculate;
+    _showMotorID = motorID;
  }
 
 void WebTelemetry::sendCsv(WiFiClient&){ /* … */ }

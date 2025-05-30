@@ -1,7 +1,6 @@
 #include "SmartMotor.h"
 #include "WebTelemetry.h"
 
-extern int prova;
 extern WebTelemetry WebTelemetry1;
 extern int wifi_publish_data;
 /**
@@ -13,11 +12,12 @@ extern int wifi_publish_data;
  * @param invert Invert motor direction, usuful when motors are mounted opposite to one another.
  * @param pio PIO to use for the encoder. Each PIO can handle up to 4 encoders.
  */
-SmartMotor::SmartMotor(byte pwm, byte dir, byte enc_a, byte enc_b, bool invert, PIO pio)
+SmartMotor::SmartMotor(byte id, byte pwm, byte dir, byte enc_a, byte enc_b, bool invert, PIO pio)
     : motor(pwm, dir, invert),
       encoder(enc_a, enc_b, new MovingAvgFilter<int>(ENC_TR_SAMPLES), invert, pio),
       pid(0.f, 0.f, 0.f, MAX_SPEED, 1.f),
-      invert(invert)
+      invert(invert),
+      _id(id)
 {}
 
 /**
@@ -28,6 +28,10 @@ void SmartMotor::begin() {
     encoder.begin();
 }
 
+byte SmartMotor::getMotorID() {
+    return _id;
+}
+
 /**
  * Update routine, updating the PID and the motor speed.
  * This function will be executed at a fixed rate, defined by DT_PID, and should therefore be called as often as possible.
@@ -35,13 +39,14 @@ void SmartMotor::begin() {
 void SmartMotor::update() {
     unsigned long now = millis();
     if(now - pid_last > DT_PID) {
+
         pid.updateFeedback(getSpeed());
         pid.calculate();
         motor.write(speedToPower(pid.getOutput()));
         if(wifi_publish_data) {
-        WebTelemetry1.updateData(getSpeed(),speedToPower(pid.getOutput()), prova , pid.getOutputPcalculated(), pid.getOutputPcalculated(), pid.getOutputPcalculated());
-        WebTelemetry1.currentData(getSpeed(),speedToPower(pid.getOutput()) ,prova , pid.getOutputPcalculated(), pid.getOutputPcalculated(),pid.getOutputPcalculated());
-prova++;
+        WebTelemetry1.updateData(getMotorID(), getSpeed(),speedToPower(pid.getOutput()), pid.getOutput() , pid.getOutputPcalculated(), pid.getOutputPcalculated(), pid.getOutputPcalculated());
+        WebTelemetry1.currentData(getMotorID() , getSpeed(),speedToPower(pid.getOutput()) ,pid.getOutput() , pid.getOutputPcalculated(), pid.getOutputPcalculated(),pid.getOutputPcalculated());
+
 //prova al posto di pid.getOutput()
         WebTelemetry1.handleClient();
         }

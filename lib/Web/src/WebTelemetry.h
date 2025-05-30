@@ -7,6 +7,7 @@
 #define TELEMETRY_HISTORY_SIZE 1000
 
 struct TelemetrySample {
+    byte motorID;  // ID del motore
     float currentSpeed;
     float targetSpeed;
     float pidOutput;
@@ -25,9 +26,9 @@ public:
                uint16_t port);
 
     void setUdpTarget(IPAddress pcIp, uint16_t pcPort);
-    void updateData(float currentSpeed, float targetSpeed, float pidOutput,float OutputPcalculate, float OutputIcalculate, float OutputDcalculate);
+    void updateData(byte motorID, float currentSpeed, float targetSpeed, float pidOutput,float OutputPcalculate, float OutputIcalculate, float OutputDcalculate);
     void handleClient();  // puoi tenere il web server, o toglierlo se non serve
-    void currentData( float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate);
+    void currentData( byte motorID, float currentSpeed, float targetSpeed, float pidOutput, float OutputPcalculate, float OutputIcalculate, float OutputDcalculate);
 private:
     WiFiServer* _server = nullptr;
     WiFiUDP    _udp;
@@ -39,6 +40,7 @@ private:
     float _showOutputPcalculate = 0;
     float _showOutputIcalculate = 0;
     float _showOutputDcalculate = 0;
+    byte _showMotorID = 0;
 
     TelemetrySample _history[TELEMETRY_HISTORY_SIZE];
     int _head = 0;

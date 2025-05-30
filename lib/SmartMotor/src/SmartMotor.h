@@ -14,7 +14,7 @@
  */
 class SmartMotor {
   public:
-    SmartMotor(byte pwm, byte dir, byte enc_a, byte enc_b, bool invert = false, PIO pio = pio0);
+    SmartMotor(byte id , byte pwm, byte dir, byte enc_a, byte enc_b, bool invert = false, PIO pio = pio0);
     void begin();
     void update();
 
@@ -23,6 +23,7 @@ class SmartMotor {
     void stop();
 
     void calibrate(float target = 45.f);
+    byte getMotorID();
 
   private:
     int speedToPower(float speed);
@@ -35,6 +36,7 @@ class SmartMotor {
     float speed;
     unsigned long enc_last;
     unsigned long pid_last;
+    byte _id;
 };
 
 #endif

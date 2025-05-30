@@ -37,8 +37,8 @@ bool wifi_publish_data = true;
 
 CanWrapper canW(5, 10000000UL, &SPI);
 
-SmartMotor motorTrLeft(DRV_TR_LEFT_PWM, DRV_TR_LEFT_DIR, ENC_TR_LEFT_A, ENC_TR_LEFT_B, false);
-SmartMotor motorTrRight(DRV_TR_RIGHT_PWM, DRV_TR_RIGHT_DIR, ENC_TR_RIGHT_A, ENC_TR_RIGHT_B, true);
+SmartMotor motorTrLeft(idMotorLeft, DRV_TR_LEFT_PWM, DRV_TR_LEFT_DIR, ENC_TR_LEFT_A, ENC_TR_LEFT_B, false);
+SmartMotor motorTrRight(idMotorRight, DRV_TR_RIGHT_PWM, DRV_TR_RIGHT_DIR, ENC_TR_RIGHT_A, ENC_TR_RIGHT_B, true);
   WebTelemetry WebTelemetry1;
 
 #ifdef MODC_YAW
@@ -92,6 +92,7 @@ void setup() {
   //motorTrLeft.calibrate();
  // motorTrRight.calibrate();
 if(wifi_publish_data){
+#ifdef MK2_MOD1
 WebTelemetry1.begin(
   WIFI_SSID, WIFI_PWD,
   IPAddress(192,168,1,100),
@@ -100,6 +101,19 @@ WebTelemetry1.begin(
   IPAddress(8,8,8,8),
   80     // se ti serve ancora il web server
 );
+
+#endif
+#ifdef MK2_MOD2
+WebTelemetry1.begin(
+  WIFI_SSID, WIFI_PWD,
+  IPAddress(192,168,1,101),
+  IPAddress(192,168,1,1),
+  IPAddress(255,255,255,0),
+  IPAddress(8,8,8,8),
+  80     // se ti serve ancora il web server
+);
+#endif
+
 WebTelemetry1.setUdpTarget(IPAddress(192,168,1,10), 9999);
 }
 #if defined MODC_EE
