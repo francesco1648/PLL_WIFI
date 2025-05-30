@@ -114,7 +114,7 @@ WebTelemetry1.begin(
 );
 #endif
 
-WebTelemetry1.setUdpTarget(IPAddress(192,168,1,10), 9999);
+WebTelemetry1.setUdpTarget(IPAddress(192,168,8,173), 9999);
 }
 #if defined MODC_EE
   Serial1.setRX(1);

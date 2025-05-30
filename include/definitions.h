@@ -70,7 +70,7 @@
 
 // OTA configuration
 #define OTA_PWD "ciaociao"
-#define WIFI_SSID "TIM-36995566"
+#define WIFI_SSID "iswifi"
 #define WIFI_PWD "--"
 #define WIFI_HOSTBASE "picow-"
 #define CONF_PATH "/config.txt"
