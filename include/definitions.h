@@ -71,7 +71,7 @@
 // OTA configuration
 #define OTA_PWD "ciaociao"
 #define WIFI_SSID "iswifi"
-#define WIFI_PWD "--"
+#define WIFI_PWD "ciaociao"
 #define WIFI_HOSTBASE "picow-"
 #define CONF_PATH "/config.txt"
 

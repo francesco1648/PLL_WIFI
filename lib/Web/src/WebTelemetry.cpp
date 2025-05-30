@@ -56,10 +56,11 @@ void WebTelemetry::sendLatestUdp() {
     TelemetrySample& s = _history[lastIdx];
 
     // preparo un record CSV
-    char buf[128];
-     int len = snprintf(buf, sizeof(buf), "%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
-                       s.timestamp, s.motorID, s.currentSpeed, s.targetSpeed,
-                       s.pidOutput, s.OutputPcalculate, s.OutputIcalculate, s.OutputDcalculate);
+    char buf[256];
+  int len = snprintf(buf, sizeof(buf), "%lu,%u,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                   s.timestamp, s.motorID, s.currentSpeed, s.targetSpeed,
+                   s.pidOutput, s.OutputPcalculate, s.OutputIcalculate, s.OutputDcalculate);
+
 
     _udp.beginPacket(_udpTargetIP, _udpTargetPort);
     _udp.write((uint8_t*)buf, len);

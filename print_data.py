@@ -9,33 +9,31 @@ def parse_csv():
         with open(CSV_FILE, "r") as f:
             lines = f.readlines()
     except FileNotFoundError:
-        return [[] for _ in range(4)]
+        return {}
 
-    if len(lines) <= 1:
-        return [[] for _ in range(4)]
+    if len(lines) == 0:
+        return {}
 
-    lines = lines[1:]  # salta intestazione
-
-    # Dati per 4 motori: [time], [current], [target]
     motor_data = {
-        0: [[], [], []],  # MOD1 M1
-        1: [[], [], []],  # MOD1 M2
-        3: [[], [], []],  # MOD2 M1
-        4: [[], [], []],  # MOD2 M2
+        10: [[], [], []],  # MOD1 M1
+        12: [[], [], []],  # MOD1 M2
+        20: [[], [], []],  # MOD2 M1
+        22: [[], [], []],  # MOD2 M2
     }
 
     for line in lines:
         try:
             parts = line.strip().split(",")
             timestamp_ms = int(parts[0])
-            motor_id = int(parts[2])
-            current_speed = float(parts[3])
-            target_speed = float(parts[4])
+            motor_id = int(parts[3])
+            current_speed = float(parts[4])
+            target_speed = float(parts[5])
             if motor_id in motor_data:
                 motor_data[motor_id][0].append(timestamp_ms)
                 motor_data[motor_id][1].append(current_speed)
                 motor_data[motor_id][2].append(target_speed)
-        except:
+        except Exception as e:
+            print(f"[ERRORE PARSING] Linea scartata: {line.strip()} ({e})")
             continue
 
     return motor_data
@@ -47,13 +45,13 @@ def animate(i):
         ax.clear()
 
     motor_labels = {
-        0: "MOD1 - Motor 1",
-        1: "MOD1 - Motor 2",
-        3: "MOD2 - Motor 1",
-        4: "MOD2 - Motor 2"
+        10: "MOD1 - Motor 1",
+        12: "MOD1 - Motor 2",
+        20: "MOD2 - Motor 1",
+        22: "MOD2 - Motor 2"
     }
 
-    for idx, motor_id in enumerate([0, 1, 3, 4]):
+    for idx, motor_id in enumerate([10, 12, 20, 22]):
         if motor_id not in data:
             continue
         t, current, target = data[motor_id]

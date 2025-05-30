@@ -89,8 +89,8 @@ void setup() {
   motorTrLeft.begin();
   motorTrRight.begin();
 
-  //motorTrLeft.calibrate();
- // motorTrRight.calibrate();
+  motorTrLeft.calibrate();
+  motorTrRight.calibrate();
 if(wifi_publish_data){
 #ifdef MK2_MOD1
 WebTelemetry1.begin(
